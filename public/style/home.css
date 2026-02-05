@@ -1,0 +1,124 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #8838ba, #6f8ccf, #12618c);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+a{
+  text-decoration: none;
+}
+
+.outer_main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.first_page_outer {
+ background: #fff;
+    width: 360px;
+    padding: 30px 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.whats_logo_outer {
+  margin-bottom: 25px;
+}
+
+.whats_logo img {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+/* Animated text */
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.animated-text span {
+  display: inline-block;
+  font-size: 28px;
+  font-weight: bold;
+  color: #2541d3;
+  animation: pop 0.6s ease forwards;
+  animation-delay: calc(var(--i) * 0.1s);
+}
+
+@keyframes pop {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Button */
+.animated-button {
+  position: relative;
+  padding: 12px 22px;
+  background: #2541d3;
+  border: none;
+  border-radius: 30px;
+  color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.animated-button .text {
+  z-index: 1;
+}
+
+.animated-button svg {
+  width: 20px;
+  fill: #fff;
+  z-index: 1;
+}
+
+.animated-button .circle {
+  position: absolute;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+.animated-button:hover .circle {
+  width: 200px;
+  height: 200px;
+}
+
+.already {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #12578c;
+  cursor: pointer;
+}
+
+.already:hover {
+  text-decoration: underline;
+}

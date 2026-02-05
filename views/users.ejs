@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dchat~app</title>
+    <link rel="stylesheet" href="/style/users.css">
+    <link rel="stylesheet" href="/style/chat.css">
+
+
+</head>
+
+<body>
+    <div class="outer_main">
+
+        <div class="first_page_outer">
+
+            <div class="bottom-nav" id="bottomnav">
+
+                <button class="nav-item active chatone" data-target="chats-section">
+                    <span class="icon">💬</span>
+                    <span class="text">Chats</span>
+                </button>
+
+                <button class="nav-item" data-target="status-section">
+                    <span class="icon">🔵</span>
+                    <span class="text">Status</span> </button>
+
+                <button class="nav-item" data-target="post-section">
+                    <span class="icon">➕</span>
+                    <span class="text">Post</span></button>
+
+
+                <button class="nav-item" data-target="calls-section">
+                    <span class="icon">📞</span>
+                    <span class="text">Calls</span></button>
+
+                <button class="nav-item" data-target="profile-section">
+                    <span class="icon">👤</span>
+                    <span class="text">Profile</span></button>
+
+                <span class="line" style="
+                            height: 40vh;
+                        "></span>
+            </div>
+
+            <div class="rightoneweb">
+
+                <div class="rightonewebinner page-section active" id="chats-section">
+
+                    <div class="page-sectionmin activeas rightonewebinner1">
+                        <div class="upper_section">
+
+                            <div class="upper_section_inner1 topone">
+                                <div class="inner1_icon">
+                                    <p> ⬅ </p>
+                                </div>
+                                <div class="inner1_input">
+                                    <input class="search_chat" type="text" placeholder="search chats">
+                                </div>
+                                <div class="inner1_icon">
+                                    <p>⚙</p>
+                                </div>
+                            </div>
+
+                            <div class="upper_section_inner2">
+                                <div class="upper_img">
+                                    <img src="/image/img.jpg" alt="" height="100%" width="100%">
+                                </div>
+                                <div class="user_det">
+                                    <h5 id="useinststus">
+
+                                    </h5>
+                                    <h5 class="currentuserintop">
+                                        <%= Currentuser.name || "..." %>
+                                    </h5>
+
+                                    <!-- <p>
+                             userData.userid || "....."
+                        </p> -->
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p style="margin: 3px 0px; color: #213293;">Chats</p>
+                        <div class="users_list" id="alluserlist">
+                            <% users.forEach(user=> { %>
+
+                                <div id="user-<%= user.id %>" data-owner="<%= user.id %>"
+                                    data-username="<%= user.name%>" class="chat_mem" onclick="openChat('<%= user.id%>')"
+                                    style="text-decoration:none;color:inherit;">
+
+                                    <div class="chat_img">
+                                        <img src="/image/img.jpg" alt="" height="100%" width="100%">
+                                    </div>
+
+                                    <div class="chat_text">
+                                        <h5>
+                                            <%= user.name %>
+                                        </h5>
+                                        <p>
+                                            <% if (lastMessages[user.id]) { %>
+                                                <% if (lastMessages[user.id].imageUrl) { %>
+                                                    📷 Image
+                                                    <% } else { %>
+                                                        <%= lastMessages[user.id].message %>
+                                                            <% } %>
+                                                                <% } else { %>
+                                                                    No messages yet
+                                                                    <% } %>
+                                        </p>
+                                    </div>
+
+                                    <span class="status-dot <%= user.online ? 'online' : 'offline' %>"></span>
+
+                                    <div class="chat_time">
+                                        <p style="font-size:11px;color:#213293;">
+                                            <%= lastMessages[user.id]?.time || "" %>
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <% }) %>
+                        </div>
+                    </div>
+
+                    <div class="leftfirst">
+                        <div class="chat-right chatno">
+                            <div class="empty-chat">
+                                <img src="image/img.jpg" alt="chat" />
+                                <h2>Select a chat</h2>
+                                <p>Click on a user to start messaging</p>
+                            </div>
+                        </div>
+
+                        <div id="chatArea" class="rightonewebinner2" style="display:none;">
+                            <div class="profile">
+                                <h5 id="chatUserName"></h5>
+                            </div>
+
+                            <div class="allchat"></div>
+                            <div class="input_box" id="chatFormmm">
+
+                                <div class="chat-input">
+                                    <input type="checkbox" id="attach-toggle">
+
+                                    <div class="attach-menu">
+
+
+
+
+                                        <label for="imageInput" class="attach-item">
+                                            🖼️
+                                            <input type="file" name="image" id="imageInput" accept="image/*" hidden>
+
+                                            <span>Gallery</span>
+                                        </label>
+
+                                        <!-- <label class="attach-item">
+                                            📷
+                                            <input type="file" accept="image/*" hidden>
+                                            <span>Camera</span>
+                                        </label>
+                                        <label class="attach-item">
+                                            📄
+                                            <input type="file" hidden>
+                                            <span>Doc..</span>
+                                        </label> -->
+
+                                    </div>
+
+                                    <label for="attach-toggle" class="plus-btn">+</label>
+
+                                </div>
+
+                                <input type="text" name="message" class="message" placeholder="Type a message"
+                                    required />
+                                <button type="button" id="sendBtn" class="send_btn">send</button>
+
+
+                            </div>
+                            <div class="image_back Chat-modal-back ">
+                                ←
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rightonewebinner page-section" id="status-section">
+
+                    <div class="page-sectionsdsds rightonewebinner1">
+                        <!-- Add Status -->
+                        <p class="textstatus">Status</p>
+                        <div class="status-add" id="addStatusBtn">
+                            <div class="status-circle add">+</div>
+                            <p>My Status</p>
+                        </div>
+
+                        <div class="status-modal" id="statusModal">
+                            <div class="status-box">
+
+                                <img id="previewImg" src="/image/img.jpg" />
+
+                                <textarea id="statusText" placeholder="Write something..."></textarea>
+
+                                <input type="file" id="statusImage" accept="image/*" hidden>
+
+                                <!-- <button id="postStatusBtn">Post Status</button> -->
+                                <button id="postStatusBtn">
+                                    <span class="btn-text">Post</span>
+                                    <span class="loader hidden"></span>
+                                </button>
+
+
+                                <div class="image_back status-modal-back ">
+                                    ←
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div id="status-page">
+                            <div class="status-header">
+                                <h3>Status</h3>
+                            </div>
+
+                            <div class="status-list" id="statusList">
+                                <% if (statuses && statuses.length> 0) { %>
+
+                                    <% statuses.forEach(userStatus=> { %>
+
+                                        <div class="status-item" data-owner="<%= userStatus.userId %>"
+                                            data-username="<%= userStatus.userName %>"
+                                            data-statuses='<%- JSON.stringify(userStatus.statuses) %>'>
+
+                                            <div class="status-circle">
+                                                <% if (userStatus.statuses?.length> 0) {
+                                                    let latestStatus = userStatus.statuses[0]; %>
+
+                                                    <% if (latestStatus.image) { %>
+                                                        <img src="<%= latestStatus.image %>" class="bimg">
+                                                        <% } else if (latestStatus.text) { %>
+                                                            <p class="status-text-placeholder btext">
+                                                                <%= latestStatus.text %>
+                                                            </p>
+                                                            <% } else { %>
+                                                                <div class="status-text-placeholder empty">No status
+                                                                </div>
+                                                                <% } %>
+
+                                                                    <% } else { %>
+                                                                        <div class="status-text-placeholder empty">
+                                                                            No
+                                                                            status
+                                                                        </div>
+                                                                        <% } %>
+                                            </div>
+
+                                            <% users.forEach(user=> { %>
+                                                <% if (user.id==userStatus.userId) { %>
+                                                    <p class="status-user">
+                                                        <%= user.name %>
+                                                    </p>
+                                                    <% } %>
+                                                        <% }) %>
+
+                                        </div>
+
+                                        <% }) %>
+
+                                            <% } else { %>
+                                                <p class="no-status">No status available</p>
+                                                <% } %>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    <div class="leftfirst">
+                        <div class="chat-right statusno">
+                            <div class="empty-chat">
+                                <img src="image/img.jpg" alt="chat" />
+                                <h2>Select a status</h2>
+                                <p>status will apeara till 24 hours</p>
+                            </div>
+                        </div>
+
+                        <div class="status-viewer rightonewebinner2" id="statusViewer">
+                            <div class="status-user-detail"></div>
+
+                            <div class="progress-container" id="progressContainer"></div>
+
+                            <div class="status_img_outer"><img id="viewerImg" ></div>
+                            <p id="viewerText"></p>
+                            <div class="image_back status-viewer-back"> ← </div>
+                            <button id="prevBtn">◀</button>
+
+                            <button id="nextBtn">▶</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="rightonewebinner page-section" id="post-section">
+                    <div class="paged-section rightonewebinner1">
+                        <div class="process">
+                            <div class="card">
+                                <h1>Coming Soon</h1>
+                                <p>We’re working on something awesome 🚀</p>
+                                <div class="dot">● ● ●</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="leftfirst">
+                        <div class="chat-right postno">
+                            <div class="empty-chat">
+                                <img src="image/img.jpg" alt="chat" />
+                                <h2>post work is panding </h2>
+                                <p>Comming soon</p>
+                            </div>
+                        </div>
+
+                        <div id="postArea" class="rightonewebinner2">poat area
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+                <div class="rightonewebinner page-section" id="calls-section">
+                    <div class="paged-sectionsasa rightonewebinner1">
+                        <div class="process">
+                            <div class="card">
+                                <h1>Coming Soon</h1>
+                                <p>We’re working on something awesome 🚀</p>
+                                <div class="dot">● ● ●</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="leftfirst">
+                        <div class="chat-right callno">
+                            <div class="empty-chat">
+                                <img src="image/img.jpg" alt="chat" />
+                                <h2>call work is panding </h2>
+                                <p>Comming soon</p>
+                            </div>
+                        </div>
+
+                        <div id="callArea" class="rightonewebinner2">call area
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+                <div class="rightonewebinner page-section" id="profile-section">
+
+
+
+                    <div class="profile-page rightonewebinner1">
+
+                        <div class="profile-header">
+                            <h3>Profile</h3>
+                        </div>
+
+                        <div class="profile-photo">
+                            <img src="https://i.pravatar.cc/150" alt="Profile Photo">
+                        </div>
+
+                        <div class="profile-info">
+                            <div class="info-item">
+                                <label>Name</label>
+                                <p>
+                                    <%= Currentuser.name || "..." %>
+                                </p>
+                            </div>
+
+                            <div class="info-item">
+                                <label>Username</label>
+                                <p>
+                                    <%= Currentuser.name || "..." %>
+                                </p>
+                            </div>
+
+                            <div class="info-item">
+                                <label>About</label>
+                                <p>Available for chat 💬</p>
+                            </div>
+
+                            <div class="info-item">
+                                <label>Phone</label>
+                                <p>
+                                    <a href="tel:+">
+                                        <%= Currentuser.contact || "..." %>
+                                    </a>
+                                </p>
+                            </div>
+
+                            <div class="info-item">
+                                <label>id</label>
+                                <p>
+                                    <%= Currentuser.id || "..." %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="btn btn-edit">Edit Profile</button>
+                            <button class="btn btn-logout" onclick="logout()">Logout</button>
+                        </div>
+
+                    </div>
+
+                    <div class="leftfirst">
+                        <div class="chat-right profileno">
+                            <div class="empty-chat">
+                                <img src="image/img.jpg" alt="chat" />
+                                <h2>edit your profile </h2>
+                                <p> or logout</p>
+                            </div>
+                        </div>
+
+                        <div id="ProfileArea" class="rightonewebinner2">
+                            profile area
+                        </div>
+                    </div>
+
+
+                </div>
+
+                
+
+                <div class="rightoneweb"> </div>
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/users.js"></script>
+
+    <script>
+        const CURRENT_USERID = "<%= Currentuser.id %>";
+
+        initSocket(CURRENT_USERID);
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet" href="/style/login_singup.css">
+</head>
+
+<body>
+    <div class="outer_main">
+        <div class="first_page_outer">
+            <div class="whats_logo">
+                <img src="/image/img.jpg" alt="">
+            </div>
+            <p class="welcome"> Welcome to what's new</p>
+            <div class="inp_outer">
+                <form action="/auth/singup" method="POST">
+                    <input type="text" class="number name" name="name" placeholder=" name">
+                    <input type="file" class="number profilephoto" name="profilephoto" placeholder=" profile photo">
+                    <input type="number" class="number contact" name="contact" placeholder=" contact no.">
+                    <input type="text" class="number password" name="password" placeholder="  password">
+                    <input type="text" class="number confirmPassword" name="confirmPassword"
+                        placeholder=" confirm password">
+                    <!-- <a href=""> -->
+                        <button type="submit" class="send">creat account</button>
+                    <!-- </a> -->
+                </form>
+            </div>
+
+
+
+            <a style="padding-top: 5px;" href="/auth/login"> login with acconut</a>
+
+        </div>
+
+    </div>
+
+
+    <script src="/js/login_singup.js"></script>
+</body>
+
+</html>

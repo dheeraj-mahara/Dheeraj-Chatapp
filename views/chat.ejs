@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>whats'new</title>
+    <link rel="stylesheet" href="/style/chat.css">
+</head>
+
+<body>
+
+
+
+
+    <input type="hidden" name="" id="senderId" value="<%= sender.userid  %>">
+    <div class="outer_main">
+        <div class="first_page_outer">
+
+
+
+            <div class="profile">
+                <div class="inner1_icon">
+                    <a href="/" style="color: white; text-decoration: none;">
+                        <p> ⬅ </p>
+                    </a>
+                </div>
+
+                <div class="chat_mem">
+                    <div class="chat_img">
+                        <img src="/image/img.jpg" alt="" height="100%" width="100%">
+                    </div>
+                    <div class="chat_text">
+                        <h5>
+                            <%= receiver.name %>
+                        </h5>
+                        <!-- <p class="on_of">....</p> -->
+                    </div>
+
+                </div>
+
+                <div class="inner1_icon">
+                    <p> : </p>
+                </div>
+            </div>
+
+            <hr color="#3047cc" style="width: 98%;">
+
+            <div class="allchat">
+
+                <p class="date">today</p>
+
+                <div class="chat_box">
+                    <% if (messages.length===0) { %>
+                        <p>No messages yet</p>
+                        <% } %>
+                </div>
+
+                <% messages.forEach(msg=> { %>
+                    <div class="<%= msg.senderId == sender.userid ? 'send ' : 'recive' %>">
+
+
+                        <% if (msg.message) { %>
+                            <p class="chats">
+                                <%= msg.message %>
+                            </p>
+                            <% } %>
+
+                                <% if (msg.imageUrl) { %>
+
+                                    <div class="chat-image"> <img src="<%= msg.imageUrl %>" height="100%" width="100%">
+                                    </div>
+                                    <% } %>
+
+                                        <p class="chattime ">
+                                            <%= msg.time %>
+                                        </p>
+                    </div>
+                    <% }) %>
+
+            </div>
+            <hr>
+
+            <div class="input_box" id="chatForm">
+
+                <div class="chat-input">
+
+                    <input type="checkbox" id="attach-toggle">
+
+                    <div class="attach-menu">
+                        <!-- <label class="attach-item">
+                            📷
+                            <input type="file" accept="image/*" hidden>
+                            <span>Camera</span>
+                        </label> -->
+
+                        <label for="imageInput" class="attach-item">
+                            🖼️
+                            <input type="file" name="image" id="imageInput" accept="image/*" hidden>
+
+                            <span>Gallery</span>
+                        </label>
+
+                        <!-- <label class="attach-item">
+                            📄
+                            <input type="file" hidden>
+                            <span>Doc..</span>
+                        </label> -->
+
+                    </div>
+
+                    <label for="attach-toggle" class="plus-btn">+</label>
+
+                </div>
+
+                <input type="text" name="message" class="message" placeholder="Type a message" required />
+                <button type="submit" class="send_btn" aria-label="Send message"> send</button>
+
+
+
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+
+
+        let senderId = "<%= sender.userid %>"
+        let roomId
+        const receiverId = "<%= receiver.id %>"
+        let socket;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            socket = io({
+                auth: {
+                    userId: senderId
+                }
+            });
+            roomId =
+                senderId < receiverId
+                    ? `${senderId}_${receiverId}`
+                    : `${receiverId}_${senderId}`;
+            const sendBtn = document.getElementById("chatForm");
+            const input = document.querySelector(".message")
+            const chatBox = document.querySelector(".allchat")
+
+            socket.on("message", (data) => {
+                const div = document.createElement("div");
+                div.className = data.senderId == senderId ? "send" : "recive";
+
+                div.innerHTML = `
+      <p class="chats">${data.message}</p>
+      <p class="chattime">${data.time}</p>
+    `;
+                chatBox.appendChild(div);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+
+            socket.on("sendImage", (data) => {
+
+                const div = document.createElement("div");
+                div.className = data.senderId === senderId ? "send" : "recive";
+
+                div.innerHTML = `
+     <div class="chat-image">   <img src="${data.imageUrl}" height="100%" width="100%" >  </div>
+      <p class="chattime">${data.time}</p>
+  `;
+                chatBox.appendChild(div);
+            })
+
+
+            const imageInput = document.getElementById("imageInput");
+
+            imageInput.addEventListener("change", () => {
+                const file = imageInput.files[0];
+                let time =
+                    new Date(Date.now()).toDateString() === new Date().toDateString()
+                        ? new Date(Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        : new Date(Date.now()).toLocaleDateString();
+
+                if (!file) return;
+
+                const reader = new FileReader();
+
+                sendImageToServer(file)
+
+                // reader.onload = () => {
+                //                 const div = document.createElement("div");
+                //                 div.className = "send";
+
+                //                 div.innerHTML = `
+                // <div class="chat-image">   <img src="${reader.result}" height="100%" width="100%" >  </div>
+                //   <p class="chattime">${new Date().toLocaleTimeString()}</p>
+                // `;
+                //                 chatBox.appendChild(div);
+                // };
+
+
+                reader.readAsDataURL(file);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                document.getElementById("attach-toggle").checked = false;
+
+
+            });
+
+            sendBtn.addEventListener("click", (e) => {
+                const msg = input.value.trim();
+
+
+                if (!msg) return
+
+                let time =
+                    new Date(Date.now()).toDateString() === new Date().toDateString()
+                        ? new Date(Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        : new Date(Date.now()).toLocaleDateString();
+
+                socket.emit("message", {
+                    to: receiverId,
+                    senderId,
+                    message: msg,
+                    roomId,
+                    time: time
+                })
+
+
+                const div = document.createElement("div");
+                div.classList.add("send");
+
+                div.innerHTML = `
+                <p class="chats">${msg}</p>
+                <p class="chattime">${time}</p>
+              `;
+
+                chatBox.appendChild(div);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                input.value = ""
+            })
+
+            // let onof = document.querySelector(".on_of")
+
+            // socket.on("updateUserStatus", (data) => {
+            //     onof.innerHTML = data.online ? "online" : "offline";
+
+            // });
+        })
+
+        function sendImageToServer(file) {
+            const formData = new FormData();
+            formData.append("image", file);
+            formData.append("roomId", roomId);
+            formData.append("senderId", senderId);
+
+            fetch("/chat/upload-image", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    socket.emit("sendImage", data);
+                });
+        }
+
+
+    </script>
+</body>
+
+</html>
