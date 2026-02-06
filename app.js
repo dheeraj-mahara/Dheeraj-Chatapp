@@ -20,7 +20,7 @@ config()
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
-const port = process.env.PORT || 5001
+const port = process.env.PORT || 8080
 
 
 app.get("/test-chat", async (req, res) => {
