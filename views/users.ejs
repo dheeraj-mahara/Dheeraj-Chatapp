@@ -7,7 +7,7 @@
     <title>Dchat~app</title>
     <link rel="stylesheet" href="/style/users.css">
     <link rel="stylesheet" href="/style/chat.css">
-    <link rel="shortcut icon" href="/image/img.jpg" type="image/x-icon">
+    <link rel="shortcut icon" href="/image/img.png">
 
 
 </head>
@@ -58,7 +58,7 @@
                                     <p> ⬅ </p>
                                 </div>
                                 <div class="inner1_input">
-                                    <input class="search_chat" type="text" placeholder="search chats">
+                                    <input class="search_chat" style="opacity: .5;" type="text" placeholder="search chats">
                                 </div>
                                 <div class="inner1_icon">
                                     <p>⚙</p>
@@ -67,7 +67,7 @@
 
                             <div class="upper_section_inner2">
                                 <div class="upper_img">
-                                    <img src="/image/img.jpg" alt="" height="100%" width="100%">
+                                    <img src="/image/img.png" alt="" height="100%" width="100%">
                                 </div>
                                 <div class="user_det">
                                     <h5 id="useinststus">
@@ -95,7 +95,7 @@
                                     style="text-decoration:none;color:inherit;">
 
                                     <div class="chat_img">
-                                        <img src="/image/img.jpg" alt="" height="100%" width="100%">
+                                        <img src="/image/img.png" alt="" height="100%" width="100%">
                                     </div>
 
                                     <div class="chat_text">
@@ -107,7 +107,10 @@
                                                 <% if (lastMessages[user.id].imageUrl) { %>
                                                     📷 Image
                                                     <% } else { %>
-                                                        <%= lastMessages[user.id].message %>
+                                                        <%= lastMessages[user.id].message.length> 20
+                                                            ? lastMessages[user.id].message.substring(0, 20) + '...'
+                                                            : lastMessages[user.id].message
+                                                            %>
                                                             <% } %>
                                                                 <% } else { %>
                                                                     No messages yet
@@ -132,7 +135,7 @@
                     <div class="leftfirst">
                         <div class="chat-right chatno">
                             <div class="empty-chat">
-                                <img src="image/img.jpg" alt="chat" />
+                                <img src="image/img.png" alt="chat" />
                                 <h2>Select a chat</h2>
                                 <p>Click on a user to start messaging</p>
                             </div>
@@ -204,7 +207,7 @@
                         <div class="status-modal" id="statusModal">
                             <div class="status-box">
 
-                                <img id="previewImg" src="/image/img.jpg" />
+                                <img id="previewImg" src="/image/img.png" />
 
                                 <textarea id="statusText" placeholder="Write something..."></textarea>
 
@@ -287,7 +290,7 @@
                     <div class="leftfirst">
                         <div class="chat-right statusno">
                             <div class="empty-chat">
-                                <img src="image/img.jpg" alt="chat" />
+                                <img src="image/img.png" alt="chat" />
                                 <h2>Select a status</h2>
                                 <p>status will apeara till 24 hours</p>
                             </div>
@@ -298,7 +301,7 @@
 
                             <div class="progress-container" id="progressContainer"></div>
 
-                            <div class="status_img_outer"><img id="viewerImg" ></div>
+                            <div class="status_img_outer"><img id="viewerImg"></div>
                             <p id="viewerText"></p>
                             <div class="image_back status-viewer-back"> ← </div>
                             <button id="prevBtn">◀</button>
@@ -324,7 +327,7 @@
                     <div class="leftfirst">
                         <div class="chat-right postno">
                             <div class="empty-chat">
-                                <img src="image/img.jpg" alt="chat" />
+                                <img src="image/img.png" alt="chat" />
                                 <h2>post work is panding </h2>
                                 <p>Comming soon</p>
                             </div>
@@ -353,7 +356,7 @@
                     <div class="leftfirst">
                         <div class="chat-right callno">
                             <div class="empty-chat">
-                                <img src="image/img.jpg" alt="chat" />
+                                <img src="image/img.png" alt="chat" />
                                 <h2>call work is panding </h2>
                                 <p>Comming soon</p>
                             </div>
@@ -429,7 +432,7 @@
                     <div class="leftfirst">
                         <div class="chat-right profileno">
                             <div class="empty-chat">
-                                <img src="image/img.jpg" alt="chat" />
+                                <img src="image/img.png" alt="chat" />
                                 <h2>edit your profile </h2>
                                 <p> or logout</p>
                             </div>
@@ -443,7 +446,7 @@
 
                 </div>
 
-                
+
 
                 <div class="rightoneweb"> </div>
 
@@ -465,7 +468,6 @@
         initSocket(CURRENT_USERID);
 
     </script>
-
 
 </body>
 

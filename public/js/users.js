@@ -725,5 +725,3 @@ function showImageLoader(tempId) {
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
-
-
