@@ -1276,9 +1276,9 @@ object-fit: contain;
   .chat-right{
     display: none;
   }
-  /* .rightoneweb{
-    height: 87%;
-  } */
+  .rightoneweb{
+    height: 100%;
+  }
   .page-section{
     height: 100%;
   }
