@@ -1158,6 +1158,12 @@ button.send_btn:hover {
 .nav.left { left: 20px; }
 .nav.right { right: 20px; }
 
+.chat-image img{
+           object-fit: contain;
+    width: auto;
+    max-width: 100%;
+}
+
 
 /* -================ resonsive -============ */
 
@@ -1171,8 +1177,10 @@ button.send_btn:hover {
     flex-direction: row;
   }
  .send .chat-image{
-    width: 45%;
+           width: 45%;
         height: 46vh;
+        display: flex;
+        justify-content: end;
 
 }
 .recive .chat-image{
@@ -1181,9 +1189,7 @@ button.send_btn:hover {
     height: 46vh;
 }
 
-.chat-image img{
-object-fit: contain;
-}
+
   .upper_section_inner2 {
     height: 8vh;
   }
@@ -1273,6 +1279,13 @@ object-fit: contain;
     height: 100%;
   }
 
+   .send .chat-image{
+          
+        display: flex;
+        justify-content: end;
+
+}
+
   .chat-right{
     display: none;
   }
@@ -1312,9 +1325,7 @@ object-fit: contain;
   .chat-image{
         height: 58vh;
   }
-  .chat-image img{
-    object-fit: contain;
-  }
+ 
    
   
 .users_list {
