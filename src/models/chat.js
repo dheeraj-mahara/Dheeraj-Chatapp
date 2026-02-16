@@ -8,7 +8,8 @@ const messageSchema = new mongoose.Schema({
   },
   message: String,
   imageUrl: String,
-  time: String
+  time: String,
+  public_id: String,
 });
 
 

@@ -913,7 +913,7 @@ hr {
 .recive .chats, .send .chats {
     padding: 10px;
     border-radius: 10px;
-    max-width: 80%;
+    max-width: 50%;
     margin-bottom: 5px;
 }
 .recive .chattime{
@@ -1165,6 +1165,197 @@ button.send_btn:hover {
 }
 
 
+.name-loading {
+    width: 80px;
+    height: 14px;
+    background: linear-gradient(
+        90deg,
+        #eee 25%,
+        #ddd 50%,
+        #eee 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+/* -================ serch input -============ */
+
+
+.inner1_input {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.search_chat {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-size: 14px;
+    transition: 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.search_chat:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}
+
+.search_results {
+    position: absolute;
+    width: 100%;
+    background: #fff;
+    border-radius: 10px;
+    margin-top: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+.search-user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f1f1f1;
+    transition: 0.2s ease;
+    cursor: pointer;
+}
+
+.search-user:hover {
+    background-color: #f9f9f9;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.user-contact {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: #777;
+}
+
+.view-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: none;
+    background: #0e2579;
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.view-btn:hover {
+    background: #0e2579da;
+}
+
+
+.chat-wrapper {
+  position: relative;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: red;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.2s ease;
+}
+
+.chat-wrapper:hover .delete-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.image-preview {
+    position: relative;
+    display: inline-block;
+    margin: 8px 0;
+    padding: 5px;
+    background: #f1f1f1;
+    border-radius: 12px;
+    max-width: 200px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.preview-img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+}
+
+.remove-img {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4d4d;
+    color: #fff;
+    font-size: 14px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.remove-img:hover {
+    background: #e60000;
+}
+
+
+.image-preview.send {
+    align-self: flex-end;
+    background: #dcf8c6; 
+}
+.image-preview {
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
 /* -================ resonsive -============ */
 
 @media screen and (min-width: 767px) {
@@ -1326,9 +1517,10 @@ button.send_btn:hover {
         height: 58vh;
   }
  
-   
-  
 .users_list {
   height: 68%;
 }
 }
+
+
+

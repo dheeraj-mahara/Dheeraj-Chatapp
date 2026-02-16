@@ -3,34 +3,6 @@ import Status from "../models/Status.js";
 import { uploadeImage } from "../utils/uploadToCloudinary.js";
 import { fetchAllStatuses } from "../services/status.service.js";
 
-// export const addStatus = async (req, res) => {
-//     try {
-//         const userId = req.user.userid;
-//         const text = req.body.text;
-
-//         let imageUrl;
-//         if (req.file) {
-//             imageUrl = await uploadeImage(req.file, "whatsnew/status");
-//         }
-
-//         const status = await Status.create({
-//             userId,
-//             image: imageUrl || null,
-//             text: text || null,
-//             expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-//             seenBy: []
-//         });
-
-//         res.status(201).json({
-//             success: true,
-//             status
-//         });
-
-//     } catch (err) {
-//         console.error("❌ addStatus error:", err);
-//         res.status(500).json({ success: false });
-//     }
-// };
 
 
 export const addStatus = async (req, res) => {
@@ -65,7 +37,7 @@ export const addStatus = async (req, res) => {
       },
       {
         new: true,
-        upsert: true   // 🔥 agar document nahi hai to bana dega
+        upsert: true  
       }
     );
 

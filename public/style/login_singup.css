@@ -39,6 +39,9 @@ background: linear-gradient(135deg, #8838ba, #6f8ccf, #12618c);  display: flex;
   font-weight: bold;
   color: #071e5e;
   margin-bottom: 20px;
+  display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .inp_outer {

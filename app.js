@@ -8,11 +8,10 @@ import chatRoutes from "./src/routes/chat.routes.js"
 import cookieParser from "cookie-parser";
 import { saveMessageToDB, updateUserStatus } from "./src/controllers/chat.controller.js";
 import statusRoutes from "./src/routes/status.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
 import { receiveMessageOnPort } from "worker_threads"
 import { log } from "console"
 import Chat from "./src/models/chat.js"
-
-
 
 
 config()
@@ -22,16 +21,6 @@ const server = http.createServer(app)
 const io = new Server(server)
 const port = process.env.PORT || 8080
 
-
-app.get("/test-chat", async (req, res) => {
-    const chat = await Chat.create({
-        sender: "65a000000000000000000001",
-        receiver: "65a000000000000000000002",
-        message: "Hello MongoDB 👋",
-    });
-
-    res.json(chat);
-});
 
 
 app.use(express.static("public"))
@@ -46,6 +35,7 @@ app.use("/auth", authRoutes)
 app.use("/", chatRoutes)
 app.use("/chat", chatRoutes)
 app.use("/status", statusRoutes);
+app.use("/users", userRoutes);
 app.get("/favicon.ico", (req, res) => res.status(204));
 
 
@@ -73,35 +63,14 @@ io.on("connection", (socket) => {
         socket.join(roomId);
     });
 
+   
 
+  socket.on("message", (data) => {
 
+  io.to(data.roomId).emit("newMessage", data.savedMessage);
 
-    socket.on("sendImage", async (data) => {      
-        io.to(data.roomId).emit("sendImage", data);
-        
-        await saveMessageToDB({
-            senderId: data.senderId,
-            receiverId: data.to,
-            message: null,
-            imageUrl: data.imageUrl,
-            time: data.time
-        });
-    });
-
-
-    socket.on("message", async (data) => {
-        io.to(data.roomId).emit("message", data);
-
-        await saveMessageToDB({
-            senderId: data.senderId,
-            receiverId: data.to,
-            message: data.message,
-            imageUrl: null,
-            time: data.time
-        });
-
-    });
-
+  io.to(data.to).emit("chatListUpdated", data.receiverList);
+});
 
     socket.on("disconnect", () => {
         const uid = Object.keys(onlineUser)
@@ -120,11 +89,8 @@ io.on("connection", (socket) => {
     });
 });
 
-
-
-
 const startServer = async () => {
-    await connectDB();     // ⬅️ wait here
+    await connectDB();     
 
     server.listen(port, () => {
         console.log("port start at ", port);
@@ -132,4 +98,3 @@ const startServer = async () => {
     })
 };
 startServer()
-

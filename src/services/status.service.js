@@ -1,7 +1,5 @@
 import Status from "../models/Status.js";
 
-
-
 export const fetchAllStatuses = async () => {
   try {
     const now = new Date();

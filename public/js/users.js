@@ -14,7 +14,6 @@ let chatno = document.querySelector(".chatno")
 let statusno = document.querySelector(".statusno")
 let pagesectioninmin = document.querySelector(".page-sectionmin")
 let statususerdetail = document.querySelector(".status-user-detail")
-
 let viewerImg = document.getElementById("viewerImg");
 let viewerText = document.getElementById("viewerText");
 let progressContainer = document.getElementById("progressContainer");
@@ -24,12 +23,16 @@ let statusList = document.getElementById("statusList");
 let users = document.getElementById("users");
 let useinststus = document.querySelector("#useinststus")
 let currentuserintop = document.querySelector(".currentuserintop")
-
-
-
+const postStatusBtn = document.getElementById("postStatusBtn");
+let messages = [];
 let currentStatuses = [];
 let currentIndex = 0;
 let timer;
+let imageListenerAdded = false;
+const alluserdata = JSON.parse(document.getElementById("usersData").value);
+let selectedImageFile = null;
+let PREVIEW_IMAGE_ID = null;
+
 
 navItems.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -93,9 +96,6 @@ document.querySelectorAll(".status-item").forEach(item => {
     };
 });
 
-
-
-const postStatusBtn = document.getElementById("postStatusBtn");
 postStatusBtn.onclick = async function () {
 
     const btn = this;
@@ -107,7 +107,6 @@ postStatusBtn.onclick = async function () {
 
     if (!file && !text) return;
 
-    // disable + show loader
     btn.disabled = true;
     btnText.classList.add("hidden");
     loader.classList.remove("hidden");
@@ -127,7 +126,7 @@ postStatusBtn.onclick = async function () {
         if (data.success) {
             addStatusToUI(data.status);
             document.getElementById("statusText").value = "";
-            previewImg.src = "/image/img.jpg"
+            previewImg.src = "/image/image.png"
             previewImg.style.border = "2px dashed #ccc";
             statusModal.classList.remove("active");
         }
@@ -136,13 +135,11 @@ postStatusBtn.onclick = async function () {
         console.error(err);
         alert("Status upload failed");
     } finally {
-        // 🔓 enable back
         btn.disabled = false;
         btnText.classList.remove("hidden");
         loader.classList.add("hidden");
     }
 };
-
 
 document.addEventListener('DOMContentLoaded', function () {
     loadStatus()
@@ -185,7 +182,7 @@ function showStatus(index) {
     if (status.text) {
 
 
-        let statustime =(
+        let statustime = (
             new Date(status.createdAt).toLocaleTimeString("en-US", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -193,7 +190,7 @@ function showStatus(index) {
             })
         );
 
-statususerdetail.innerHTML=`
+        statususerdetail.innerHTML = `
 <p class="statustime">${statustime} </p>
 `
         viewerText.innerText = status.text;
@@ -263,12 +260,8 @@ prevBtn.onclick = () => {
 
 };
 
-
-
-
 function addStatusToUI(userStatus) {
 
-    const alluserlist = document.getElementById("alluserlist");
 
     const userId = userStatus.userId;
     const statuses = userStatus.statuses;
@@ -329,27 +322,74 @@ function addStatusToUI(userStatus) {
 
 
 
-
-// sdd
-
-//  profile work
-
 function logout() {
     if (confirm("Are you sure you want to logout?")) {
         window.location.href = "/auth/logout";
     }
 }
+let currentReceiverId = null;
+let currentRoomId = null;
 
 let socket;
 let CURRENT_USER_ID;
 const chatBox = document.querySelector(".allchat");
 
 
+
+function renderChatList(list) {
+
+    const container = document.getElementById("alluserlist");
+    container.innerHTML = "";
+
+    list.forEach(user => {
+
+        const matchedUser = alluserdata.find(
+            u => u.id === user.contactId
+        );
+        const userName = matchedUser?.name;
+        const lastMsg = user.lastMessage || "No messages yet";
+        container.innerHTML += `
+        <div id="user-${user.contactId}"
+            data-owner="${user.contactId}"
+            data-username="${userName}"
+            class="chat_mem"
+            onclick="openChat('${user.contactId}')"
+            style="text-decoration:none;color:inherit;">
+
+            <div class="chat_img">
+                <img src="/image/image.png" height="100%" width="100%">
+            </div>
+
+            <div class="chat_text">
+                 <h5 class="${userName ? "" : "name-loading"}">
+        ${userName || ""}
+    </h5>
+                <p>
+                    ${lastMsg.length > 20
+                ? lastMsg.substring(0, 20) + "..."
+                : lastMsg}
+                </p>
+            </div>
+
+            <span class="status-dot ${user.online ? "online" : "offline"}"></span>
+
+            <div class="chat_time">
+                <p style="font-size:11px;color:#213293;">
+                    ${new Date(user.updatedAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })}
+                </p>
+            </div>
+
+        </div>
+        `;
+    });
+}
 function initSocket(currentUserId) {
     if (socket) return socket;
 
     CURRENT_USER_ID = currentUserId;
-
     socket = io({
         auth: { userId: currentUserId }
     });
@@ -357,6 +397,7 @@ function initSocket(currentUserId) {
     socket.emit("userOnline", { userId: currentUserId });
 
     socket.on("updateUserStatus", (data) => {
+
 
         const userRow = document.getElementById(`user-${data.userId}`);
         if (!userRow) return;
@@ -369,150 +410,119 @@ function initSocket(currentUserId) {
         }
     });
 
-
-    socket.on("message", (data) => {
-        if (!chatBox) return;
-        chatBox.insertAdjacentHTML(
-            "beforeend",
-            `<div class="${String(data.senderId) === String(CURRENT_USER_ID) ? "send" : "recive"}">
-        <p class="chats">${data.message}</p>
-        <p class="chattime">${data.time}</p>
-      </div>`
-        );
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-    });
-
-    socket.on("sendImage", (data) => {
-        const chatBox = document.querySelector(".allchat");
-        if (!chatBox) return;
-        if (
-            String(data.senderId) === String(CURRENT_USER_ID) &&
-            TEMP_IMAGE_ID
-        ) {
-            const loaderDiv = document.getElementById(TEMP_IMAGE_ID);
-
-            if (loaderDiv) {
-                loaderDiv.innerHTML = `
-                ${data.imageUrl ? `
-                  <div class="chat-image">
-                    <img src="${data.imageUrl}" height="100%" width="100%">
-                  </div>` : ""}
-                <p class="chattime">${data.time}</p>
-            `;
-            }
-
-            TEMP_IMAGE_ID = null;
-            return;
-        }
-
-        chatBox.insertAdjacentHTML(
-            "beforeend",
-            `<div class="recive">
-            <div class="chat-image">
-              <img src="${data.imageUrl}" height="100%" width="100%">
-            </div>
-            <p class="chattime">${data.time}</p>
-        </div>`
-        );
-
-        chatBox.scrollTop = chatBox.scrollHeight;
+    socket.on("chatListUpdated", (updatedList) => {
+        renderChatList(updatedList);
     });
 
 
+    socket.on("newMessage", (msg) => {
+
+        // if (document.querySelector(`[data-id="${msg._id}"]`)) return;
+        messages.push(msg);
+        renderMessages(messages);
+    });
     return socket;
 }
 let TEMP_IMAGE_ID = null;
 
+
+
+function removePreview() {
+    document.getElementById(PREVIEW_IMAGE_ID)?.remove();
+    selectedImageFile = null;
+    PREVIEW_IMAGE_ID = null;
+}
+
+imageInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    selectedImageFile = file;
+    PREVIEW_IMAGE_ID = "preview_" + Date.now();
+
+    const previewURL = URL.createObjectURL(file);
+
+    chatBox.insertAdjacentHTML(
+        "beforeend",
+        `<div class="send image-preview" id="${PREVIEW_IMAGE_ID}">
+            <img src="${previewURL}" class="preview-img"/>
+            <span class="remove-img" onclick="removePreview()">✖</span>
+        </div>`
+    );
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+    document.getElementById("attach-toggle").checked = false;
+});
 function initChat(receiverId) {
+    currentReceiverId = receiverId;
 
     const senderId = CURRENT_USER_ID;
-
-    const roomId =
+    currentRoomId =
         senderId < receiverId
             ? `${senderId}_${receiverId}`
             : `${receiverId}_${senderId}`;
 
-    socket.emit("joinRoom", { roomId });
-    // message work =-----------=-
+    socket.emit("joinRoom", { roomId: currentRoomId });
+}
 
-    const input = document.querySelector(".message");
-    const sendBtn = document.getElementById("sendBtn");
-    sendBtn.onclick = null;
-    sendBtn.onclick = () => {
+const input = document.querySelector(".message");
+sendBtn.addEventListener("click", handleSend);
+input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        handleSend();
+    }
+});
 
+function handleSend() {
+    const text = input.value.trim();
 
-        const msg = input.value.trim();
-        if (!msg) return;
+    if (!text && !selectedImageFile) return;
 
-        const time = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
+    if (PREVIEW_IMAGE_ID) {
+        const previewDiv = document.getElementById(PREVIEW_IMAGE_ID);
+        previewDiv.innerHTML = `<div class="chat-loader">Sending image...</div>`;
+        previewDiv.id = "sending_" + Date.now();
+    }
 
-        socket.emit("message", {
-            senderId: CURRENT_USER_ID,
-            to: receiverId,
-            roomId,
-            message: msg,
-            time
+    sendChatMessage({
+        text,
+        file: selectedImageFile
+    });
 
-        });
+    input.value = "";
+    selectedImageFile = null;
+    PREVIEW_IMAGE_ID = null;
+}
 
+async function sendChatMessage({ text = "", file = null }) {
 
-
-        input.value = "";
-
-    };
-
-
-    // function addMessageToUI(msg) {
-
-
-
-    //     chatBox.insertAdjacentHTML(
-    //         "beforeend",
-    //         `<div class="${String(msg.senderId) === String(CURRENT_USER_ID) ? "send" : "recive"}">
-    //     <p class="chats">${msg.message}</p>
-    //     <p class="chattime">${msg.time}</p>
-    //   </div>`
-    //     );
-
-    //     chatBox.scrollTop = chatBox.scrollHeight;
-    // }
+    if (!currentReceiverId) return;
+    if (!text && !file) return;
 
 
-    // image work =-----------=-
+    const formData = new FormData();
+    if (text) formData.append("message", text);
+    if (file) formData.append("image", file);
 
-    const imageInput = document.getElementById("imageInput");
+    const res = await fetch(`/chat/${currentReceiverId}/message`, {
+        method: "POST",
+        body: formData
+    });
 
-    imageInput.addEventListener("change", () => {
-        const file = imageInput.files[0];
+    const data = await res.json();
+    renderChatList(data.senderList);
 
-        if (!file) return;
-
-        TEMP_IMAGE_ID = "img_" + Date.now();
-        const reader = new FileReader();
-        sendImageToServer(file, roomId, senderId, receiverId)
-        reader.readAsDataURL(file);
-
-        chatBox.insertAdjacentHTML(
-            "beforeend",
-            `<div class="send" id="${TEMP_IMAGE_ID}">
-            <div class="chat-loader">Uploading image...</div>
-        </div>`
-        );
-
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        document.getElementById("attach-toggle").checked = false;
-
-
+    socket.emit("message", {
+        savedMessage: data.savedMessage,
+        receiverList: data.receiverList,
+        roomId: currentRoomId,
+        to: currentReceiverId,
     });
 
 
-
-
+    input.value = "";
+    selectedImageFile = null;
 }
 
 document.querySelector(".Chat-modal-back").addEventListener("click", () => {
@@ -529,11 +539,13 @@ document.querySelector(".Chat-modal-back").addEventListener("click", () => {
 })
 
 function openChat(receiverId) {
+    if (!receiverId || receiverId === "undefined") {
+        return;
+    }
 
     chatno.style.display = "none"
     if (window.innerWidth <= 767) {
 
-        // document.getElementById("chats-section").classList.remove("active");
         pagesectioninmin.style.display = "none"
 
         document.getElementById("bottomnav").style.display = "none";
@@ -541,7 +553,6 @@ function openChat(receiverId) {
     }
     document.getElementById("chatArea").style.display = "block";
     let leftfirst = document.querySelector(".leftfirst")
-    leftfirst.style.width = "100%"
 
     leftfirst.style.display = "block"
 
@@ -551,8 +562,12 @@ function openChat(receiverId) {
     fetch(`/chat/${receiverId}/data`)
         .then(res => res.json())
         .then(data => {
-            document.getElementById("chatUserName").innerText = data.receiver.receiverUser.name;
-            renderMessages(data.messages);
+            document.getElementById("chatUserName").innerText =
+                data.receiver.receiverUser.name;
+
+            messages = data.messages;
+            renderMessages(messages);
+
             initChat(receiverId);
         });
 }
@@ -613,6 +628,7 @@ function addSwipe(modal) {
 }
 
 function showImageFull() {
+
     let modal = document.querySelector(".image-modal");
 
     if (!modal) {
@@ -651,7 +667,6 @@ function renderMessages(messages) {
     box.innerHTML = ""
 
 
-
     box.addEventListener("click", function (e) {
         const img = e.target.closest(".chat-image img");
         if (!img) return;
@@ -665,25 +680,70 @@ function renderMessages(messages) {
         showImageFull();
     });
 
-
-
-
     messages.forEach(msg => {
+
+        const isSender = String(msg.senderId) === String(CURRENT_USER_ID);
 
         box.insertAdjacentHTML(
             "beforeend",
-            `<div class="${String(msg.senderId) === String(CURRENT_USER_ID) ? "send" : "recive"}">
+            `<div class="${isSender ? "send" : "recive"} chat-wrapper" data-id="${msg._id}">
        
-           ${msg.message ? ` <p class="chats">${msg.message}</p>` : ""}
-        ${msg.imageUrl ? ` <div class="chat-image" > <img src="${msg.imageUrl}"  height="100%" width="100%">  </div>` : ""}
-        <p class="chattime">${msg.time}</p>        
-      </div>`
+       ${msg.message ? `<p class="chats">${msg.message}</p>` : ""}
+
+       ${msg.imageUrl ? `
+          <div class="chat-image">
+             <img src="${msg.imageUrl}" height="100%" width="100%">
+          </div>` : ""
+            }
+
+${isSender ? `
+  <span class="delete-btn" title="Delete message">
+    🗑
+  </span>
+` : ""}
+       <p class="chattime">${msg.time}</p>        
+    </div>`
         );
+
         chatBox.scrollTop = chatBox.scrollHeight;
+        if (isSender) {
+            const deleteBtn = box.querySelector(`[data-id="${msg._id}"] .delete-btn`);
+
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => {
+                    deleteMessage(msg._id);
+                });
+            }
+        }
+
     });
 
 }
 
+
+
+
+async function deleteMessage(messageId) {
+    try {
+        const res = await fetch(`/chat/message/${messageId}`, {
+            method: "DELETE"
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            const messageElement = document.querySelector(
+                `.chat-wrapper[data-id="${messageId}"]`
+            );
+            let otherMess = messages.filter(m => m._id != messageId)
+            messages = otherMess
+            if (messageElement) messageElement.remove();
+        }
+
+    } catch (err) {
+        console.error("Delete failed", err);
+    }
+}
 
 function sendImageToServer(file, roomId, senderId, receiverId) {
 
@@ -693,23 +753,21 @@ function sendImageToServer(file, roomId, senderId, receiverId) {
     formData.append("senderId", senderId);
     formData.append("receiverId", receiverId);
 
-    fetch("/chat/upload-image", {
+    fetch(`/chat/${receiverId}/message`, {
         method: "POST",
         body: formData
     })
         .then(res => res.json())
         .then(data => {
-            socket.emit("sendImage", {
-                senderId,
-                to: receiverId,
-                roomId,
-                imageUrl: data.imageUrl,
-                time: data.time
-            });
+            // socket.emit("sendImage", {
+            //     senderId,
+            //     to: receiverId,
+            //     roomId,
+            //     imageUrl: data.imageUrl,
+            //     time: data.time
+            // });
         });
 }
-
-
 
 
 //  -==--= loading work  -=-==-=
@@ -725,3 +783,55 @@ function showImageLoader(tempId) {
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+
+
+// -==============================-      user serch system  -===========
+
+
+const searchInput = document.querySelector(".search_chat");
+const resultBox = document.querySelector(".search_results");
+
+searchInput.addEventListener("keyup", async () => {
+    const q = searchInput.value.trim();
+
+    if (q === "") {
+        resultBox.innerHTML = "";
+        return;
+    }
+
+    const res = await fetch(`/users/search?q=${q}`);
+    const users = await res.json();
+
+
+    resultBox.innerHTML = "";
+
+    if (users.length === 0) {
+        resultBox.innerHTML = '<p style="color:#0e2579; text-align:center;">No user found</p>';
+        return;
+    }
+
+
+    users.forEach(user => {
+
+        const div = document.createElement("div");
+        div.classList.add("search-user");
+
+        div.innerHTML = `
+        <div class="user-info">
+            <h4 class="user-name">${user.name}</h4>
+            <p class="user-contact">${user.contact}</p>
+        </div>
+        <button class="view-btn">View</button>
+`;
+
+
+        div.onclick = () => {
+            openChat(user._id);
+            resultBox.innerHTML = ""
+        };
+
+
+        resultBox.appendChild(div);
+    });
+});
