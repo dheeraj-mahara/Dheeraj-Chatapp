@@ -531,6 +531,7 @@ document.querySelector(".Chat-modal-back").addEventListener("click", () => {
         let leftfirst = document.querySelector(".leftfirst")
         leftfirst.style.display = "none"
 
+
     }
     document.getElementById("chats-section").classList.add("active");
     document.getElementById("bottomnav").style.display = "flex";
@@ -553,8 +554,8 @@ function openChat(receiverId) {
     }
     document.getElementById("chatArea").style.display = "block";
     let leftfirst = document.querySelector(".leftfirst")
-
     leftfirst.style.display = "block"
+
 
 
 

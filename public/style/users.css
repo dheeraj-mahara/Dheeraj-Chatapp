@@ -1359,6 +1359,7 @@ button.send_btn:hover {
 /* -================ resonsive -============ */
 
 @media screen and (min-width: 767px) {
+ 
   .process{
     display: none;
   }
@@ -1463,8 +1464,14 @@ button.send_btn:hover {
 }
 }
 
+.leftfirst{
+  display: none;
+}
 @media screen and (max-width: 767px) {
-
+ .leftfirst{
+    width: 100%;
+  }
+  
   .first_page_outer{
     flex-direction: column-reverse;
     height: 100%;
