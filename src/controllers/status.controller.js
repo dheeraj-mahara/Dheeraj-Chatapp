@@ -12,8 +12,8 @@ export const addStatus = async (req, res) => {
 
     let imageUrl = null;
     if (req.file) {
-      imageUrl = await uploadeImage(req.file, "whatsnew/status");
-    }
+ const uploaded = await uploadeImage(req.file, "whatsnew/status");
+  imageUrl = uploaded.imageUrl;     }
 
     const expireAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 

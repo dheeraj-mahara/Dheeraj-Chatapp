@@ -666,9 +666,9 @@ a {
   color: white;
 }
 
-.btn:hover {
+/* .btn:hover {
   opacity: 0.9;
-}
+} */
 
 
 
@@ -1464,13 +1464,9 @@ button.send_btn:hover {
 }
 }
 
-.leftfirst{
-  display: none;
-}
+
 @media screen and (max-width: 767px) {
- .leftfirst{
-    width: 100%;
-  }
+
   
   .first_page_outer{
     flex-direction: column-reverse;

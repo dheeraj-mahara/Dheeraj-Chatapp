@@ -121,6 +121,7 @@ export const sendMessage = async (req, res) => {
         minute: "2-digit",
         hour12: true
       });
+      
     const result = await saveMessageToDB({
       senderId,
       receiverId,
@@ -194,6 +195,8 @@ export const saveMessageToDB = async ({
       public_id,   
       time
     });
+    console.log("time",time);
+    
 
     await chat.save();
 

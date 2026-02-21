@@ -164,6 +164,7 @@ function createProgressBars() {
 }
 
 function showStatus(index) {
+
     clearInterval(timer);
     let statusimgouter = document.querySelector(".status_img_outer")
     const status = currentStatuses[index];
@@ -172,7 +173,16 @@ function showStatus(index) {
     statusimgouter.style.display = "none";
 
     if (status.image) {
-
+         let statustime = (
+            new Date(status.createdAt).toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+            })
+        );
+   statususerdetail.innerHTML = `
+<p class="statustime">${statustime} </p>
+`
         viewerImg.src = status.image;
         statusimgouter.style.display = "flex";
 
@@ -180,7 +190,6 @@ function showStatus(index) {
     }
 
     if (status.text) {
-
 
         let statustime = (
             new Date(status.createdAt).toLocaleTimeString("en-US", {
@@ -276,7 +285,6 @@ function addStatusToUI(userStatus) {
 
 
     if (existingItem) {
-        // update existing user's statuses
         existingItem.dataset.statuses = JSON.stringify(statuses);
 
         const circle = existingItem.querySelector(".status-circle");
@@ -304,6 +312,8 @@ function addStatusToUI(userStatus) {
 
 
         div.onclick = () => {
+
+
             currentStatuses = statuses;
             currentIndex = 0;
             createProgressBars();
