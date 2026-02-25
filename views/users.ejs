@@ -87,47 +87,39 @@
                         <p style="margin: 3px 0px; color: #213293;">Chats</p>
                         <div class="users_list" id="alluserlist">
                             <% users.forEach(user=> { %>
-                                <div id="user-<%= user.id %>" data-owner="<%= user.id %> "
-                                    data-username="<%= user.name%>" class="chat_mem" onclick="openChat('<%= user.id%>')"
-                                    style="text-decoration:none;color:inherit;">
+                                <% console.log(user); %>
 
-                                    <div class="chat_img">
-                                        <img src="/image/image.png" alt="" height="100%" width="100%">
+                                    <div id="user-<%= user.id %>" data-owner="<%= user.id %> "
+                                        data-username="<%= user.name%>" class="chat_mem"
+                                        onclick="openChat('<%= user.id%>')" style="text-decoration:none;color:inherit;">
+
+                                        <div class="chat_img">
+                                            <img src="/image/image.png" alt="" height="100%" width="100%">
+                                        </div>
+
+                                        <div class="chat_text">
+                                            <h5>
+                                                <%= user.name %>
+                                            </h5>
+                                            <p>
+                                                <%=user.lastMessage %>
+                                            </p>
+                                        </div>
+
+                                        <span class="status-dot <%= user.online ? 'online' : 'offline' %>"></span>
+
+                                        <div class="chat_time">
+                                            <p style="font-size:11px;color:#213293;">
+
+    <%= new Date(user.updatedAt).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+    }) %>                                            </p>
+                                        </div>
+
                                     </div>
 
-                                    <div class="chat_text">
-                                        <h5>
-                                            <%= user.name %>
-                                        </h5>
-                                        <p>
-                                            <% if (lastMessages[user.id]) { %>
-                                                <% if (lastMessages[user.id].imageUrl){ %>
-                                                    📷 Image
-                                                    <% } else if (lastMessages[user.id].message == null) {
-                                                    {return}
-                                                    } else { %>
-                                                        <%= lastMessages[user.id].message.length> 20
-                                                            ? lastMessages[user.id].message.substring(0, 20) + '...'
-                                                            : lastMessages[user.id].message
-                                                            %>
-                                                            <% } %>
-                                                                <% } else { %>
-                                                                    No messages yet
-                                                                    <% } %>
-                                        </p>
-                                    </div>
-
-                                    <span class="status-dot <%= user.online ? 'online' : 'offline' %>"></span>
-
-                                    <div class="chat_time">
-                                        <p style="font-size:11px;color:#213293;">
-                                            <%= lastMessages[user.id]?.time || "" %>
-                                        </p>
-                                    </div>
-
-                                </div>
-
-                                <% }) %>
+                                    <% }) %>
                         </div>
                     </div>
 
@@ -464,6 +456,8 @@
     <script>
         const CURRENT_USERID = "<%= Currentuser.id %>";
         initSocket(CURRENT_USERID);
+
+        
 
 
 

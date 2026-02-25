@@ -346,7 +346,11 @@ const chatBox = document.querySelector(".allchat");
 
 
 
+// Example
+
 function renderChatList(list) {
+    console.log();
+    
 
     const container = document.getElementById("alluserlist");
     container.innerHTML = "";

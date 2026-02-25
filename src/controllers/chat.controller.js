@@ -40,13 +40,16 @@ export const openchatPage = async (req, res) => {
     ownerId: String(sender.userid)
   }).sort({ updatedAt: -1 });
 
+  
   const users = chatUsers.map(chat => {
     const user = allUsers.find(u => u.id === chat.contactId);
+    // console.log(allUsers);
+    
 
     if (!user) return null;
 
     return {
-      allUsers,
+    
       id: user.id,
       name: user.name,
       contact: user.contact,
@@ -56,7 +59,6 @@ export const openchatPage = async (req, res) => {
     };
   })
     .filter(Boolean);
-
 
 
 
